@@ -7,14 +7,20 @@ const FilaUsuario = ({ usuario, asignarRol, nombreUsuarioActual, ROLES }) => {
     const [mensaje, setMensaje] = useState('');
     const [estaActualizando, setEstaActualizando] = useState(false);
 
+    const esJefeLogueado = usuario.username === nombreUsuarioActual && usuario.role === ROLES.JEFE;
+    const esUsuarioMockJefe = usuario.username === 'JefeMock';
+
     const manejarCambioDeRol = async () => {
         if (nuevoRol === usuario.role) return; 
+        if (esJefeLogueado || esUsuarioMockJefe) return;
 
         setEstaActualizando(true);
         setMensaje('');
         try {
             await asignarRol(usuario.userId, nuevoRol); 
-            setMensaje(`Rol cambiado a ${nuevoRol}.`);
+            setTimeout(() => {
+                setMensaje(`Rol de ${usuario.username} cambiado a ${nuevoRol}.`);
+            }, 100);
         } catch (err) {
             setMensaje(`Error: ${err.message}`);
             setNuevoRol(usuario.role); 
@@ -31,6 +37,8 @@ const FilaUsuario = ({ usuario, asignarRol, nombreUsuarioActual, ROLES }) => {
         }
     };
 
+    const isJefe = esJefeLogueado || esUsuarioMockJefe;
+
     return (
         <div className="flex items-center justify-between p-4 mb-2 bg-gray-800 rounded-lg">
             <div className="flex flex-col">
@@ -40,7 +48,7 @@ const FilaUsuario = ({ usuario, asignarRol, nombreUsuarioActual, ROLES }) => {
             </div>
             
             <div className="flex items-center space-x-3">
-                <select value={nuevoRol} onChange={(e) => setNuevoRol(e.target.value)} disabled={estaActualizando}
+                <select value={nuevoRol} onChange={(e) => setNuevoRol(e.target.value)} disabled={estaActualizando || isJefe}
                     className="p-2 rounded bg-gray-700 text-white border border-gray-600">
                     {Object.values(ROLES).filter(rol => rol !== ROLES.JEFE).map((rol) => (
                         <option key={rol} value={rol}>{rol.toUpperCase()}</option>
@@ -93,10 +101,11 @@ export default function PanelJefe() {
             setUsuarios(data); 
         } catch (err) {
             setErrorCarga(err.message);
+            setUsuarios([]);
         } finally {
             setCargandoUsuarios(false);
         }
-    }, [obtenerTodosLosUsuarios, user.userId, setCargandoUsuarios])
+    }, [obtenerTodosLosUsuarios])
 
     useEffect(() => {
         if (isLoggedIn && role === ROLES.JEFE) {
@@ -129,7 +138,8 @@ export default function PanelJefe() {
                     <h2 className="text-2xl text-white mb-6">Administración de Roles ({usuarios.length} Usuarios)</h2>
                     
                     {usuarios.map((u) => (
-                        <FilaUsuario key={u.userId} usuario={u} asignarRol={handleAssignRole} nombreUsuarioActual={user.username} ROLES={ROLES}/>
+                        <FilaUsuario key={u.userId} nombreUsuarioActual={usuarios.find(u => u.role === ROLES.JEFE)?.username || user.username} 
+                        usuario={u} asignarRol={handleAssignRole} ROLES={ROLES}/>
                     ))}
                     {errorCarga && <p className="text-red-400 mt-4 text-center">Error al cargar usuarios: {errorCarga}</p>}
                 </div>

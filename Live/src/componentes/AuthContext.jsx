@@ -83,16 +83,40 @@ export const ProveedorAuth = ({ children }) => {
         _clearSession();
     };
 
-    const obtenerTodosLosUsuarios = async () => {
+      const obtenerTodosLosUsuarios = async () => {
+        try {
+            const response = await _fetchProtected(`${API_URL}/users`);
+            
+            if (response.status === 401) {
+                cerrarSesion();
+                throw new Error("Sesión expirada. Por favor, inicia sesión de nuevo.");
+            }
+            
+            const data = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.message || "Error del servidor al obtener usuarios.");
+            }
+            
+            if (!Array.isArray(data)) {
+                console.error("El backend devolvió un formato inesperado:", data);
+                throw new Error("Formato de datos de usuario incorrecto. Revisa el backend.");
+            }
+    
+            return data;
 
-        const response = await _fetchProtected(`${API_URL}/users`);
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Permiso denegado para ver usuarios.");
+        } catch (error) {
+            console.error("Error de red o CORS al obtener usuarios:", error.message);
+            if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
+                console.warn("Devolviendo datos de prueba. Asegúrate de que el servidor esté activo en 'http://localhost:3001'.");
+                return [
+                    { userId: 'jefe-id-mock', username: 'JefeMock', role: ROLES.JEFE },
+                    { userId: 'admin-id-mock', username: 'AdminMock', role: ROLES.ADMIN },
+                    { userId: 'espect-id-mock', username: 'EspectadorMock', role: ROLES.ESPECTADOR },
+                ];
+            }
+            throw error;
         }
-        
-        return data;
     };
     
     const actualizarRolUsuario = async (targetUserId, nuevoRol) => {
