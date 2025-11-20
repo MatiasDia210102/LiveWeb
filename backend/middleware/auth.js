@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'TU_SECRETO_SEGURO';
+
+require('dotenv').config(); 
+const JWT_SECRET = process.env.JWT_SECRET || 'TU_SECRETO_SEGURO_LOCAL';
 
 exports.verifyToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -12,15 +14,19 @@ exports.verifyToken = (req, res, next) => {
     
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-
         req.user = decoded; 
         next(); 
     } catch (err) {
+        console.error("Error al verificar token:", err.message);
         return res.status(401).json({ message: 'Token inválido o expirado.' });
     }
 };
 
 exports.verifyAdminOrJefe = (req, res, next) => {
+    if (!req.user || !req.user.role) {
+         return res.status(403).json({ message: 'Permiso denegado. Usuario no autenticado.' });
+    }
+    
     const role = req.user.role;
     
     if (role === 'administrador' || role === 'jefe') {
