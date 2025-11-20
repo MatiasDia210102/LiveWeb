@@ -102,6 +102,8 @@ export const ProveedorAuth = ({ children }) => {
                 console.error("El backend devolvió un formato inesperado:", data);
                 throw new Error("Formato de datos de usuario incorrecto. Revisa el backend.");
             }
+
+            console.log("Usuarios obtenidos exitosamente del Backend:", data);
     
             return data;
 
