@@ -29,8 +29,8 @@ mongoose.connect(MONGODB_URI)
 
 app.get('/api/users', authMiddleware.verifyToken, authMiddleware.verifyAdminOrJefe, async (req, res) => {
     try {
-        const usersDB = await User.find({_id: { $ne: req.user.userId }}).select('-password').lean();
-        const usersFrontend = usersDB.map(user => ({userId: user._id, username: user.username, role: user.role}));
+        const usersDB = await User.find({}).select('-password').lean(); 
+        const usersFrontend = usersDB.map(user => ({userId: user._id.toString(), username: user.username, role: user.role}));
         res.json(usersFrontend);
     } catch (error) {
         console.error("Error al obtener la lista de usuarios:", error);

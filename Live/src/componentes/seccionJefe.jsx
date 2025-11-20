@@ -90,7 +90,7 @@ export default function PanelJefe() {
 
         try {
             const data = await obtenerTodosLosUsuarios(); 
-            setUsuarios(data.filter(u => u.userId !== user.userId)); 
+            setUsuarios(data); 
         } catch (err) {
             setErrorCarga(err.message);
         } finally {
