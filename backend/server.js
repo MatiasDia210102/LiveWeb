@@ -29,7 +29,10 @@ mongoose.connect(MONGODB_URI)
 
 app.get('/api/users', authMiddleware.verifyToken, authMiddleware.verifyAdminOrJefe, async (req, res) => {
     try {
+        console.log("--> RECIBIDA PETICIÓN /api/users");
         const usersDB = await User.find({}).select('-password').lean(); 
+
+        console.log(`[DB] Se encontraron ${usersDB.length} usuarios.`);
         const usersFrontend = usersDB.map(user => ({userId: user._id.toString(), username: user.username, role: user.role}));
         res.json(usersFrontend);
     } catch (error) {
