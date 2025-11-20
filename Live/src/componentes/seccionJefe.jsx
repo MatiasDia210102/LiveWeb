@@ -1,33 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAuth} from './AuthContext.jsx';
-import { Navigate } from 'react-router-dom';
+import { useAuth } from './AuthContext.jsx';
+// No necesitamos Navigate ya que eliminaremos las comprobaciones de rol/login.
 
-const FilaUsuario = ({ usuario, asignarRol, usuarioActualId, nombreUsuarioActual, ROLES }) => {
+// Mantendremos FilaUsuario intacta, pero simplificaremos las props.
+// Ahora ignora 'usuarioActualId' y 'nombreUsuarioActual'
+const FilaUsuario = ({ usuario, asignarRol, ROLES }) => {
+    // Usamos datos dummy para el estado inicial
     const [nuevoRol, setNuevoRol] = useState(usuario.role);
-    const [mensaje, setMensaje] = useState('');
+    const [mensaje, setMensaje] = useState('Modo Diagnóstico');
     const [estaActualizando, setEstaActualizando] = useState(false);
+    
+    // Eliminamos la lógica de inmutabilidad (esUsuarioLogueado, esJefe, esInmutable)
+    const esInmutable = false; // Desactivado para diagnóstico
 
-    const esUsuarioLogueado = usuario.userId === usuarioActualId;
-    const esJefe = usuario.role === ROLES.JEFE;
-    const esInmutable = esUsuarioLogueado && esJefe;
-
-    const manejarCambioDeRol = async () => {
-        if (nuevoRol === usuario.role) return; 
-        if (esInmutable) return;
-
-        setEstaActualizando(true);
-        setMensaje('');
-        try {
-            await asignarRol(usuario.userId, nuevoRol); 
-            setTimeout(() => {
-                setMensaje(`Rol de ${usuario.username} cambiado a ${nuevoRol}.`);
-            }, 100);
-        } catch (err) {
-            setMensaje(`Error: ${err.message}`);
-            setNuevoRol(usuario.role); 
-        } finally {
-            setEstaActualizando(false);
-        }
+    // La función manejarCambioDeRol ahora solo mostrará un log,
+    // ya que no tenemos un usuario logueado en este modo de prueba.
+    const manejarCambioDeRol = () => {
+        console.log(`[DIAGNÓSTICO] Intento de asignar rol ${nuevoRol} a ${usuario.username}`);
+        setMensaje(`Rol: ${usuario.role} (Cambio deshabilitado en modo diagnóstico)`);
     };
 
     const colorRol = (rol) => {
@@ -39,24 +29,25 @@ const FilaUsuario = ({ usuario, asignarRol, usuarioActualId, nombreUsuarioActual
     };
 
     return (
-        <div className="flex items-center justify-between p-4 mb-2 bg-gray-800 rounded-lg">
+        <div className="flex items-center justify-between p-4 mb-2 bg-gray-800 rounded-lg border border-red-500">
             <div className="flex flex-col">
-                <p className="text-white text-lg">{usuario.username} {usuario.username === nombreUsuarioActual ? '(Tú)' : ''}</p>
+                {/* Ahora no podemos poner (Tú) porque eliminamos la prop del usuario logueado */}
+                <p className="text-white text-lg">{usuario.username} (ID: {usuario.userId.substring(0, 5)}...)</p>
                 <p className={`text-sm ${colorRol(usuario.role)}`}>Rol actual: {usuario.role}</p>
-                {mensaje && <p className="text-xs text-green-500 mt-1">{mensaje}</p>}
+                {mensaje && <p className="text-xs text-red-500 mt-1">{mensaje}</p>}
             </div>
             
             <div className="flex items-center space-x-3">
-                <select value={nuevoRol} onChange={(e) => setNuevoRol(e.target.value)} disabled={estaActualizando || esInmutable}
+                <select value={nuevoRol} onChange={(e) => setNuevoRol(e.target.value)} disabled={true} // Deshabilitado
                     className="p-2 rounded bg-gray-700 text-white border border-gray-600">
                     {Object.values(ROLES).map((rol) => (
                         <option key={rol} value={rol}>{rol.toUpperCase()}</option>
                     ))}
                 </select>
                 
-                <button onClick={manejarCambioDeRol} disabled={estaActualizando || nuevoRol === usuario.role || esInmutable}
-                    className={`px-4 py-2 rounded transition duration-200 ${nuevoRol !== usuario.role && !estaActualizando ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}>
-                    {estaActualizando ? 'Guardando...' : 'Asignar'}
+                <button onClick={manejarCambioDeRol} disabled={true} // Deshabilitado
+                    className={`px-4 py-2 rounded transition duration-200 bg-gray-600 text-gray-400 cursor-not-allowed`}>
+                    Diagnóstico
                 </button>
             </div>
         </div>
@@ -64,33 +55,15 @@ const FilaUsuario = ({ usuario, asignarRol, usuarioActualId, nombreUsuarioActual
 };
 
 
-export default function PanelJefe() {
-    const { user, isLoggedIn, role, obtenerTodosLosUsuarios, actualizarRolUsuario, calendarioLives, actualizarCalendarioLives, ROLES } = useAuth();
+export default function PanelJefeDiagnostico() {
+    // Solo necesitamos obtenerTodosLosUsuarios y ROLES.
+    const { obtenerTodosLosUsuarios, ROLES } = useAuth();
     const [usuarios, setUsuarios] = useState([]);
     const [setCargandoUsuarios] = useState(true);
     const [errorCarga, setErrorCarga] = useState('');
-    const [mensajeCalendario, setMensajeCalendario] = useState('');
-    const [cargandoGuardado, setCargandoGuardado] = useState(false);
-
-    const calendarioInicial = [
-        { day: 'Viernes', games: ['Resident Evil', 'Outlast'], times: ['20:00', '22:00'] },
-        { day: 'Sabado', games: ['Blood Strike', 'Among us', 'Roblox'], times: ['20:00', '22:00', '00:15'] },
-        { day: 'Domingo', games: ['Outlast', 'R.E.P.O'], times: ['19:00', '21:00'] },
-    ];
-
-    const manejarGuardadoCalendario = async () => {
-        setCargandoGuardado(true);
-        setMensajeCalendario('');
-        try {
-            await actualizarCalendarioLives(calendarioInicial);
-            setMensajeCalendario('✅ ¡Calendario inicial guardado exitosamente!');
-        } catch (err) {
-            setMensajeCalendario(`❌ Error al guardar el calendario: ${err.message}`);
-        } finally {
-            setCargandoGuardado(false);
-        }
-    };
-
+    
+    // Eliminamos toda la lógica de Calendario para simplificar la vista.
+    
     const cargarUsuarios = useCallback(async () => {
         setCargandoUsuarios(true);
         setErrorCarga('');
@@ -99,9 +72,15 @@ export default function PanelJefe() {
             const data = await obtenerTodosLosUsuarios(); 
             setUsuarios(data); 
 
-            console.log("Usuarios obtenidos exitosamente del Backend:", data);
+            // LOG DE DIAGNÓSTICO
+            console.log("-----------------------------------------");
+            console.log("✅ RESULTADO DE DIAGNÓSTICO DEL FRONTEND:");
+            console.log("Usuarios recibidos (data.length):", data.length);
+            console.log("Datos:", data);
+            console.log("-----------------------------------------");
+
         } catch (err) {
-            setErrorCarga(err.message);
+            setErrorCarga(`ERROR: ${err.message}. Asegúrate que el backend esté corriendo y la URL sea correcta.`);
             setUsuarios([]);
         } finally {
             setCargandoUsuarios(false);
@@ -110,59 +89,49 @@ export default function PanelJefe() {
     
 
     useEffect(() => {
-        if (isLoggedIn && role === ROLES.JEFE) {
-            cargarUsuarios();
-        }
-    }, [ROLES.JEFE, cargarUsuarios, isLoggedIn, role]);
-
-    if (!isLoggedIn || role !== ROLES.JEFE) {
-        return <Navigate to="/" replace />;
-    }
-
-    const handleAssignRole = async (targetUserId, newRole) => {
-        try {
-            await actualizarRolUsuario(targetUserId, newRole);
-            await cargarUsuarios();
-            return { message: `Rol de ${targetUserId} cambiado a ${newRole} con éxito.` };
-        } catch (err) {
-            throw err;
-        }
+        // Ejecuta la carga de usuarios inmediatamente al montar el componente.
+        cargarUsuarios();
+    }, [cargarUsuarios]);
+    
+    // Eliminamos la verificación de rol/login.
+    
+    // Función Dummy para pasar a FilaUsuario
+    const handleAssignRoleDummy = (targetUserId, newRole) => {
+         console.log(`[DIAGNÓSTICO] Intento de asignar rol a ID: ${targetUserId}, Rol: ${newRole}`);
+         return Promise.resolve({ message: "Dummy update." });
     };
+
 
     return (
         <div className="min-h-screen bg-gray-900 pt-32 px-4 flex justify-center pb-20">
             <div className="w-full max-w-4xl pt-10">
-                <h1 className="text-4xl font-orbitron text-cyan-400 mb-8 text-center drop-shadow-[0_0_5px_cyan]">
-                    Panel de Control (Jefe)
+                <h1 className="text-4xl font-orbitron text-red-500 mb-8 text-center drop-shadow-[0_0_5px_red]">
+                    PANEL DE DIAGNÓSTICO (IGNORANDO ROLES Y LOGIN)
                 </h1>
                 
-                <div className="bg-gray-900 p-6 rounded-xl shadow-2xl border border-purple-700">
-                    <h2 className="text-2xl text-white mb-6">Administración de Roles ({usuarios.length} Usuarios)</h2>
+                <div className="bg-gray-900 p-6 rounded-xl shadow-2xl border border-red-700">
+                    <h2 className="text-2xl text-white mb-6">Resultado: ({usuarios.length} Usuarios)</h2>
                     
-                    {usuarios.map((u) => (
-                        <FilaUsuario key={u.userId} usuarioActualId={user.userId} nombreUsuarioActual={user.username} usuario={u} asignarRol={handleAssignRole} ROLES={ROLES}/>
-                    ))}
-                    {errorCarga && <p className="text-red-400 mt-4 text-center">Error al cargar usuarios: {errorCarga}</p>}
-                </div>
-
-                <div className="bg-gray-900 p-6 rounded-xl shadow-2xl border border-blue-700 mt-8">
-                    <h2 className="text-2xl text-white mb-6">Herramientas de Contenido</h2>
-                    
-                    <div className="bg-gray-800 p-4 rounded-lg border border-cyan-700">
-                        <h3 className="text-xl text-cyan-400 mb-3">Inicializar Calendario de Lives</h3>
-                        <p className="text-gray-400 mb-3">
-                            {calendarioLives && calendarioLives.length === 0 
-                                ? 'La base de datos de Lives está vacía. ¡Presiona para cargar el horario inicial!' 
-                                : `El calendario ya tiene ${calendarioLives ? calendarioLives.length : 0} días cargados.`
-                            }
+                    {usuarios.length > 0 ? (
+                        usuarios.map((u) => (
+                            <FilaUsuario 
+                                key={u.userId} 
+                                usuario={u} 
+                                asignarRol={handleAssignRoleDummy} 
+                                ROLES={ROLES}
+                            />
+                        ))
+                    ) : (
+                         <p className="text-xl text-yellow-400 mt-4 text-center p-4">
+                            CERO USUARIOS. Revisa la consola para ver si hubo un error de red, o si el backend está enviando un array vacío.
                         </p>
-
-                        <button onClick={manejarGuardadoCalendario} disabled={cargandoGuardado} className="w-full py-2 rounded font-semibold transition duration-200 bg-green-600 hover:bg-green-700 text-white disabled:bg-gray-600 disabled:text-gray-400">
-                            {cargandoGuardado ? 'Guardando...' : 'Guardar Horario Inicial'}
-                        </button>
-                        {mensajeCalendario && <p className={`mt-2 text-sm text-center font-bold ${mensajeCalendario.startsWith('❌') ? 'text-red-400' : 'text-green-400'}`}>{mensajeCalendario}</p>}
-                    </div>
+                    )}
+                    
+                    {errorCarga && <p className="text-red-400 mt-4 text-center font-bold">Error de Carga: {errorCarga}</p>}
                 </div>
+                
+                {/* Eliminamos la sección de Herramientas de Contenido */}
+
             </div>
         </div>
     );
