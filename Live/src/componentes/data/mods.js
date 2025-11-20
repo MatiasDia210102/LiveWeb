@@ -1,0 +1,186 @@
+export const staffMembers = [
+  { 
+    name: "Sofi", 
+    role: "La Asesina", 
+    image: "/Fotos/Staff/sofi.jpeg",
+    description: "Te la cruzas donde sea y te mata (aunque el juego no tenga esa opcion).",
+  },
+  { 
+    name: "FER", 
+    role: "El Billetera loca", 
+    image: "/Fotos/Staff/fer.jpeg", 
+    description: "Viene dos minutos, te dona dos dolares y se va el hdp jajja.",
+  },
+  { 
+    name: "Vale", 
+    role: "La Hormonal", 
+    image: "/Fotos/Staff/vale.jpeg", 
+    description: "Algo me dice que le gusta Wesker.",
+  },
+   { 
+    name: "Papu", 
+    role: "Te saludo y me voy", 
+    image: "/Fotos/Staff/papu.jpeg", 
+    description: "Viene, tira un facto y se va",
+  },
+  { 
+    name: "Mili", 
+    role: "Tengo mal internet", 
+    image: "/Fotos/Staff/mili.jpeg", 
+    description: "Dice que va a jugar pero al minuto se le cae el wifi.",
+  },
+   { 
+    name: "Moni", 
+    role: "El CS es mi vida", 
+    image: "/Fotos/Staff/moni.jpeg", 
+    description: "¿Su Psicologo? el CS.",
+  },
+  { 
+    name: "Elena", 
+    role: "Da su vida por Pepito", 
+    image: "/Fotos/Staff/elena.jpeg", 
+    description: "Si no le activas la racha te mete preso.",
+  },
+   { 
+    name: "Tiago", 
+    role: "Dame Plata", 
+    image: "/Fotos/Staff/tiago.jpeg", 
+    description: "Te ve con 5 pesos y te los pide para las cariñosas.",
+  },
+  { 
+    name: "Maiki", 
+    role: "La muerte roja", 
+    image: "/Fotos/Staff/maiki.jpeg", 
+    description: "Hace live y se va al gym, luego aparece y le quieren pelear.",
+  },
+
+   { 
+    name: "Yani", 
+    role: "Tiro al aire", 
+    image: "/Fotos/Staff/yani.jpeg", 
+    description: "Juega una partida de Blood y le dispara al cielo.",
+  },
+  { 
+    name: "Fran", 
+    role: "El asalta tumbas", 
+    image: "/Fotos/Staff/fran.jpeg", 
+    description: "Le gustan las abuelas en bikini.",
+  },
+  { 
+    name: "Dutra", 
+    role: "Me gustas ¿te gusto?", 
+    image: "/Fotos/Staff/dutra.jpeg", 
+    description: "'Chica que veo, chica que me chamuyo'.",
+  },
+  { 
+    name: "Rin", 
+    role: "Silenciosa pero leal", 
+    image: "/Fotos/Staff/rin.jpeg", 
+    description: "Esta siempre en los lives pero ni habla casi.",
+  },
+  { 
+    name: "ValePoh", 
+    role: "A quien le deci Maraca?", 
+    image: "/Fotos/Staff/valepoh.jpeg", 
+    description: "Le gusta pelear y jugar al fornite, me cae bien.",
+  },
+    { 
+    name: "Cachete", 
+    role: "El Sugar Daddy", 
+    image: "/Fotos/Staff/cachete.jpeg", 
+    description: "Viene cada mil años pero cuando viene hace desastres ;).",
+  },
+    { 
+    name: "Nezu", 
+    role: "Le pagan por insultar", 
+    image: "/Fotos/Staff/nezu.jpeg", 
+    description: "Es yayo pero en version mujer, fanatica n°1 del Blood.",
+  },
+    { 
+    name: "Facu", 
+    role: "El Facturas", 
+    image: "/Fotos/Staff/facu.jpeg", 
+    description: "Solo viene a tirar factos.",
+  },
+    { 
+    name: "Sonic", 
+    role: "El quita vidas", 
+    image: "/Fotos/Staff/sonic.jpeg", 
+    description: "Es compinche de sofi, mata todo lo que ve.",
+  },
+    { 
+    name: "Alma", 
+    role: "La que ronca", 
+    image: "/Fotos/Staff/alma.jpeg", 
+    description: "Viene solo a presumir como ronca su hijo.",
+  },
+    { 
+    name: "Miss", 
+    role: "Angel guardian", 
+    image: "/Fotos/Staff/miss.jpeg", 
+    description: "Explica medio como el culo pero te salva.",
+  },
+    { 
+    name: "Virrenis", 
+    role: "Jugadora n°1 de Free Fire", 
+    image: "/Fotos/Staff/virrenis.jpeg", 
+    description: "Solo viene a dejar buenas vibras y se va a matar gente.",
+  },
+];
+
+export const favMembers = [
+  { 
+    name: "Los Virreyes", 
+    role: "Es un papucho", 
+    image: "/Fotos/Staff/adrien.jpeg",
+    description: "Viene, te seduce y se va.",
+  },
+  { 
+    name: "Fernan", 
+    role: "El rey del Project Reality", 
+    image: "/Fotos/Staff/fernan.jpeg", 
+    description: "Este amigo lleva meses insistiendo con el Project, menuda paciencia jaja.",
+  },
+  { 
+    name: "Luna", 
+    role: "La perdida", 
+    image: "/Fotos/Staff/luna.jpeg", 
+    description: "Es Uruguaya.",
+  },
+   { 
+    name: "Rafa", 
+    role: "Roba kills", 
+    image: "/Fotos/Staff/rafa.jpeg", 
+    description: "Da igual si jugas Blood Strike o Among us, el siempre te saca las kills",
+  },
+  { 
+    name: "Reyleg", 
+    role: "El Nuevo", 
+    image: "/Fotos/Staff/reyleg.jpeg", 
+    description: "Llego a competir por el top 2 en Blood Strike con Panda.",
+  },
+   { 
+    name: "Panda", 
+    role: "MVP del Blood", 
+    image: "/Fotos/Staff/panda.jpeg", 
+    description: "Te mete un tiro en la nuca nada mas aparecer.",
+  },
+  { 
+    name: "Alequink", 
+    role: "La Leyenda", 
+    image: "/Fotos/Staff/alequink.jpeg", 
+    description: "Vino un dia y destrono al MVP del Blood como si nada.",
+  },
+  {
+    name: "Isa", 
+    role: "Te saluda y se va", 
+    image: "/Fotos/Staff/isa.jpeg", 
+    description: "No te miento, te saluda y se va jaja.",
+  },
+  {
+    name: "Mati",
+    role: "Ganador del Torneo de Blood",
+    image:"/Fotos/Staff/mati.jpeg",
+    description: "Yo no deberia estar aca pero es mi pagina asi que hago lo que se me canta",
+  },
+];

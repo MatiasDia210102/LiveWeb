@@ -1,0 +1,16 @@
+{
+    "name": "matiu/backend",
+    "description": "Matías Díaz <matiu210102dewilde@gmail.com>",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matías Díaz",
+            "email": "matiu210102dewilde@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "phpmailer/phpmailer": "^6.10"
+    }
+}
