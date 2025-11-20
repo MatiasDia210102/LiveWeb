@@ -29,8 +29,7 @@ mongoose.connect(MONGODB_URI)
 
 app.get('/api/users', authMiddleware.verifyToken, authMiddleware.verifyAdminOrJefe, async (req, res) => {
     try {
-
-        const usersDB = await User.find({role: { $ne: 'jefe' }, _id: { $ne: req.user.userId }}).select('-password').lean();
+        const usersDB = await User.find({_id: { $ne: req.user.userId }}).select('-password').lean();
         const usersFrontend = usersDB.map(user => ({userId: user._id, username: user.username, role: user.role}));
         res.json(usersFrontend);
     } catch (error) {
