@@ -98,6 +98,8 @@ export default function PanelJefe() {
         try {
             const data = await obtenerTodosLosUsuarios(); 
             setUsuarios(data); 
+
+            console.log("Usuarios obtenidos exitosamente del Backend:", data);
         } catch (err) {
             setErrorCarga(err.message);
             setUsuarios([]);
@@ -105,6 +107,7 @@ export default function PanelJefe() {
             setCargandoUsuarios(false);
         }
     }, [obtenerTodosLosUsuarios])
+    
 
     useEffect(() => {
         if (isLoggedIn && role === ROLES.JEFE) {
