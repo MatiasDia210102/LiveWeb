@@ -117,7 +117,7 @@ export const ProveedorAuth = ({ children }) => {
             }
             throw error;
         }
-    };
+    };  
     
     const actualizarRolUsuario = async (targetUserId, nuevoRol) => {
 

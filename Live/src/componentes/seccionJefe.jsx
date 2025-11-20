@@ -2,17 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth} from './AuthContext.jsx';
 import { Navigate } from 'react-router-dom';
 
-const FilaUsuario = ({ usuario, asignarRol, nombreUsuarioActual, ROLES }) => {
+const FilaUsuario = ({ usuario, asignarRol, usuarioActualId, nombreUsuarioActual, ROLES }) => {
     const [nuevoRol, setNuevoRol] = useState(usuario.role);
     const [mensaje, setMensaje] = useState('');
     const [estaActualizando, setEstaActualizando] = useState(false);
 
-    const esJefeLogueado = usuario.username === nombreUsuarioActual && usuario.role === ROLES.JEFE;
-    const esUsuarioMockJefe = usuario.username === 'JefeMock';
+    const esUsuarioLogueado = usuario.userId === usuarioActualId;
+    const esJefe = usuario.role === ROLES.JEFE;
+    const esInmutable = esUsuarioLogueado && esJefe;
 
     const manejarCambioDeRol = async () => {
         if (nuevoRol === usuario.role) return; 
-        if (esJefeLogueado || esUsuarioMockJefe) return;
+        if (esInmutable) return;
 
         setEstaActualizando(true);
         setMensaje('');
@@ -37,8 +38,6 @@ const FilaUsuario = ({ usuario, asignarRol, nombreUsuarioActual, ROLES }) => {
         }
     };
 
-    const isJefe = esJefeLogueado || esUsuarioMockJefe;
-
     return (
         <div className="flex items-center justify-between p-4 mb-2 bg-gray-800 rounded-lg">
             <div className="flex flex-col">
@@ -48,14 +47,14 @@ const FilaUsuario = ({ usuario, asignarRol, nombreUsuarioActual, ROLES }) => {
             </div>
             
             <div className="flex items-center space-x-3">
-                <select value={nuevoRol} onChange={(e) => setNuevoRol(e.target.value)} disabled={estaActualizando || isJefe}
+                <select value={nuevoRol} onChange={(e) => setNuevoRol(e.target.value)} disabled={estaActualizando || esInmutable}
                     className="p-2 rounded bg-gray-700 text-white border border-gray-600">
-                    {Object.values(ROLES).filter(rol => rol !== ROLES.JEFE).map((rol) => (
+                    {Object.values(ROLES).map((rol) => (
                         <option key={rol} value={rol}>{rol.toUpperCase()}</option>
                     ))}
                 </select>
                 
-                <button onClick={manejarCambioDeRol} disabled={estaActualizando || nuevoRol === usuario.role}
+                <button onClick={manejarCambioDeRol} disabled={estaActualizando || nuevoRol === usuario.role || esInmutable}
                     className={`px-4 py-2 rounded transition duration-200 ${nuevoRol !== usuario.role && !estaActualizando ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-gray-600 text-gray-400 cursor-not-allowed'}`}>
                     {estaActualizando ? 'Guardando...' : 'Asignar'}
                 </button>
@@ -138,8 +137,7 @@ export default function PanelJefe() {
                     <h2 className="text-2xl text-white mb-6">Administración de Roles ({usuarios.length} Usuarios)</h2>
                     
                     {usuarios.map((u) => (
-                        <FilaUsuario key={u.userId} nombreUsuarioActual={usuarios.find(u => u.role === ROLES.JEFE)?.username || user.username} 
-                        usuario={u} asignarRol={handleAssignRole} ROLES={ROLES}/>
+                        <FilaUsuario key={u.userId} usuarioActualId={user.userId} nombreUsuarioActual={user.username} usuario={u} asignarRol={handleAssignRole} ROLES={ROLES}/>
                     ))}
                     {errorCarga && <p className="text-red-400 mt-4 text-center">Error al cargar usuarios: {errorCarga}</p>}
                 </div>
