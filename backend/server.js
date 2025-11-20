@@ -10,7 +10,7 @@ const authMiddleware = require('./middleware/auth.js');
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5173;
+const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/mi_portfolio_db';
 const JWT_SECRET = process.env.JWT_SECRET || 'TU_SECRETO_SEGURO_LOCAL'; 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
